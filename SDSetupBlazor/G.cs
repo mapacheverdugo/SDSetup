@@ -16,7 +16,7 @@ namespace SDSetupBlazor
 {
     public static class G {
 
-        public static string hostname = "https://files.sdsetup.com";
+        public static string hostname = "http://0.0.0.0:5000";
 
         public static string packageset = "default24";
         public static string channel = "latest";
