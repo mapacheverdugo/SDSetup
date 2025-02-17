@@ -49,7 +49,7 @@ namespace SDSetupBackend {
                         .AllowCredentials();
                     });
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -67,9 +67,8 @@ namespace SDSetupBackend {
             });
             app.UseIpRateLimiting();
 
-#if (DEBUG)
             app.UseCors("AllowAll");
-#endif
+
             app.UseMvc();
         }
     }
