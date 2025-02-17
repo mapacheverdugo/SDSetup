@@ -38,7 +38,6 @@ namespace SDSetupBackend {
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
-#if (DEBUG)
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
@@ -50,7 +49,7 @@ namespace SDSetupBackend {
                         .AllowCredentials();
                     });
             });
-#endif
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
