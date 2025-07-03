@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+
+# Logs
+*.log
+
+# Temporary files
+**/temp/
+**/tmp/
+
+# Documentation
+README.md
+LICENSE
+*.md
+
+# Control panel (Windows Forms app)
+SDSetupBackendControlPanel/
+
+# Updater (separate utility)
+SDSetupUpdater/ 

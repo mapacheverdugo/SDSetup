@@ -1,0 +1,58 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+WORKDIR /app
+EXPOSE 5000
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+WORKDIR /src
+
+# Copy the project files
+COPY ["SDSetupBackend/SDSetupBackend.csproj", "SDSetupBackend/"]
+COPY ["SDSetupCommon/SDSetupCommon.csproj", "SDSetupCommon/"]
+COPY ["libraries/", "libraries/"]
+
+# Restore dependencies
+RUN dotnet restore "SDSetupBackend/SDSetupBackend.csproj"
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the application
+WORKDIR "/src/SDSetupBackend"
+RUN dotnet build "SDSetupBackend.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "SDSetupBackend.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+# Create necessary directories
+RUN mkdir -p /app/config /app/files /app/temp /app/updater
+
+# Set default host configuration
+RUN echo "0.0.0.0" > /app/config/host.txt && \
+    echo "5000" >> /app/config/host.txt && \
+    echo "0.0.0.0" > /app/host.txt && \
+    echo "5000" >> /app/host.txt && \
+    echo "0.0.0.0" > /host.txt && \
+    echo "5000" >> /host.txt
+
+# Set default package set
+RUN echo "default" > /app/config/latestpackageset.txt
+
+# Set default app version
+RUN echo "NO VERSION" > /app/config/latestappversion.txt
+
+# Set valid channels
+RUN echo "latest" > /app/config/validchannels.txt && \
+    echo "nightly" >> /app/config/validchannels.txt
+
+# Create default package set directory and manifest
+RUN mkdir -p /app/files/default && \
+    echo '{"Platforms":{}}' > /app/files/default/manifest6.json
+
+# The application runs as a .NET DLL, not an executable
+# No need to make it executable
+
+ENTRYPOINT ["dotnet", "SDSetupBackend.dll"] 
