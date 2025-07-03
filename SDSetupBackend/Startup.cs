@@ -45,8 +45,7 @@ namespace SDSetupBackend {
                         builder
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowAnyHeader();
                     });
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -65,6 +64,34 @@ namespace SDSetupBackend {
                 ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
             });
             app.UseIpRateLimiting();
+
+            // Add CORS headers to all responses, including errors and 404s
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch
+                {
+                    // Always add CORS headers on exception
+                    if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+                    {
+                        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                        context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+                        context.Response.Headers.Add("Access-Control-Allow-Methods", "*");
+                    }
+                    throw;
+                }
+                
+                // Add CORS headers to all responses
+                if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+                {
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+                    context.Response.Headers.Add("Access-Control-Allow-Methods", "*");
+                }
+            });
 
             app.UseCors("AllowAll");
             app.UseMvc();

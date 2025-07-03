@@ -144,6 +144,9 @@
         }
 
         if (!G.initialized) {
+            // Initialize hostname from environment variables or localStorage
+            await G.InitializeHostname(jsRuntime);
+            
             string uuid = Guid.NewGuid().ToString().Replace("-", "").ToLower();
 
             HttpResponseMessage resp;

@@ -28,6 +28,9 @@ COPY --from=publish /app/publish/wwwroot .
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Set environment variable for backend URL
+ENV SDSETUP_BACKEND_URL=http://localhost:5000
+
 EXPOSE 80
 EXPOSE 443
 

@@ -16,7 +16,7 @@ namespace SDSetupBlazor
 {
     public static class G {
 
-        public static string hostname = "http://localhost:5000";
+        public static string hostname = Environment.GetEnvironmentVariable("SDSETUP_BACKEND_URL") ?? "http://localhost:5000";
 
         public static string packageset = "default24";
         public static string channel = "latest";
@@ -44,6 +44,24 @@ namespace SDSetupBlazor
         public static bool donotcontinue = false;
 
         private static List<string> oldPreSelects;
+
+        public static async Task InitializeHostname(IJSRuntime jsRuntime)
+        {
+            try
+            {
+                // Try to get hostname from JavaScript environment variable
+                var jsHostname = await jsRuntime.InvokeAsync<string>("eval", "window.SDSETUP_BACKEND_URL || null");
+                if (!string.IsNullOrEmpty(jsHostname))
+                {
+                    hostname = jsHostname;
+                }
+            }
+            catch
+            {
+                // Fallback to environment variable or default
+                hostname = Environment.GetEnvironmentVariable("SDSETUP_BACKEND_URL") ?? "http://localhost:5000";
+            }
+        }
 
         public static Warning GetCurrentWarning() {
             return _currentWarning;

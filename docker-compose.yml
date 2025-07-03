@@ -28,6 +28,8 @@ services:
     ports:
       - "8080:80"
       - "8081:443"
+    environment:
+      - SDSETUP_BACKEND_URL=${SDSETUP_BACKEND_URL:-http://localhost:5000}
     depends_on:
       - backend
     restart: unless-stopped
