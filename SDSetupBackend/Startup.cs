@@ -74,8 +74,8 @@ namespace SDSetupBackend {
                 }
                 catch
                 {
-                    // Always add CORS headers on exception
-                    if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+                    // Always add CORS headers on exception if response hasn't started
+                    if (!context.Response.HasStarted && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
                     {
                         context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                         context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
@@ -84,8 +84,8 @@ namespace SDSetupBackend {
                     throw;
                 }
                 
-                // Add CORS headers to all responses
-                if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+                // Add CORS headers to all responses if they haven't been added yet
+                if (!context.Response.HasStarted && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
                 {
                     context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                     context.Response.Headers.Add("Access-Control-Allow-Headers", "*");

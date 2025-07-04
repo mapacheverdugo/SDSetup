@@ -50,7 +50,7 @@ RUN echo "latest" > /app/config/validchannels.txt && \
 
 # Create default package set directory and manifest
 RUN mkdir -p /app/files/default && \
-    echo '{"Platforms":{}}' > /app/files/default/manifest6.json
+    echo '{"Version":"1.0","Copyright":"","Message":{"Color":"info","InnerHTML":"Welcome to Homebrew SD Setup!"},"Platforms":{"switch":{"Name":"Nintendo Switch","MenuName":"Switch","HomeIcon":"/img/switch.png","ID":"switch","Color":"danger","Visible":true,"PackageSections":{},"Bundles":[]}}}' > /app/files/default/manifest6.json
 
 # The application runs as a .NET DLL, not an executable
 # No need to make it executable

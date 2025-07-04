@@ -156,8 +156,8 @@ namespace SDSetupBackend {
                 if (!File.Exists((_FilesPath + "/" + k + "/manifest6.json").AsPath())) File.WriteAllText(_FilesPath + "/" + k + "/manifest6.json", "{}");
             }
 
-            string _latestPackageset = File.ReadAllText((_ConfigPath + "/latestpackageset.txt").AsPath());
-            string _latestAppVersion = File.ReadAllText((_ConfigPath + "/latestappversion.txt").AsPath());
+            string _latestPackageset = File.ReadAllText((_ConfigPath + "/latestpackageset.txt").AsPath()).Trim();
+            string _latestAppVersion = File.ReadAllText((_ConfigPath + "/latestappversion.txt").AsPath()).Trim();
             string[] _validChannels = File.ReadAllLines((_ConfigPath + "/validchannels.txt").AsPath());
 
             //look away
@@ -172,6 +172,13 @@ namespace SDSetupBackend {
                 _Manifests[k] = JsonConvert.SerializeObject(m, Formatting.Indented);
             }
 
+            // Ensure the default manifest exists
+            if (!_Manifests.ContainsKey("default")) {
+                Console.WriteLine("[WARN] Default manifest not found, creating empty default manifest");
+                Manifest defaultManifest = new Manifest();
+                _Manifests["default"] = JsonConvert.SerializeObject(defaultManifest, Formatting.Indented);
+            }
+
             //this must be set before GetPackageListInLatestPackageset() is called
             FilesPath = _FilesPath;
 
@@ -182,6 +189,17 @@ namespace SDSetupBackend {
             //} else {
             //    _dlStats = new DownloadStats();
             //}
+
+            // Ensure the latest packageset exists in manifests
+            if (!_Manifests.ContainsKey(_latestPackageset)) {
+                Console.WriteLine($"[WARN] Latest packageset '{_latestPackageset}' not found in manifests, using default");
+                _latestPackageset = "default";
+                if (!_Manifests.ContainsKey("default")) {
+                    Console.WriteLine("[ERROR] Default manifest not found, creating empty default manifest");
+                    Manifest defaultManifest = new Manifest();
+                    _Manifests["default"] = JsonConvert.SerializeObject(defaultManifest, Formatting.Indented);
+                }
+            }
 
             Manifest latestManifest = JsonConvert.DeserializeObject<Manifest>(_Manifests[_latestPackageset]);
             //_dlStats.VerifyStatisticsIntegrity(U.GetPackageList(_latestPackageset), latestManifest);
